@@ -1,0 +1,16 @@
+html, body {
+    height: 100%;
+}
+
+.content {
+    flex: 1;
+}
+
+header, footer {
+    background-color: #0D6EFD;
+}
+
+.btn-form {
+    margin-bottom: 30px;
+}
+

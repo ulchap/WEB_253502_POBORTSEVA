@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css" />
+    <link rel="stylesheet" href="/css/site.css" />
+
+    <style>
+        :root {
+            --bs-primary: #083C65;
+        }
+    </style>
+
+</head>
+<body class="d-flex flex-column">
+    <header>
+        <div class="container">
+            <nav class="navbar navbar-expand-md navbar-dark bg-primary">
+                <partial name="_MenuPartial" />
+                <partial name="_UserInfoPartial" />
+            </nav>
+        </div>
+    </header>
+
+
+    <main class="container">
+        @RenderBody()
+    </main>
+
+    <footer class="mt-auto">
+        <div class="container">
+            <nav class="navbar navbar-expand-md navbar-dark bg-primary">
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-item nav-link" href="http://www.facebook.com">
+                        <i class="fa-brands fa-facebook-f fa-2x"></i>
+                    </a>
+                    <a class="nav-item nav-link" href="http://www.vk.com">
+                        <i class="fa-brands fa-vk fa-2x"></i>
+                    </a>
+                    <a class="nav-item nav-link" href="http://www.twitter.com">
+                        <i class="fa-brands fa-twitter fa-2x"></i>
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </footer>
+
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
