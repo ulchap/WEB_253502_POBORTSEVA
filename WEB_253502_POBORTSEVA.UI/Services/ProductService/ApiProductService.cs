@@ -3,6 +3,7 @@ using System.Text;
 using WEB_253502_POBORTSEVA.Domain.Models;
 using WEB_253502_POBORTSEVA.Domain.Entities;
 using WEB_253502_POBORTSEVA.UI.Services.ProductService;
+using WEB_253502_POBORTSEVA.UI.Services.FileService;
 
 namespace WEB_253502_POBORTSEVA.UI.Services.ProductService
 {
@@ -12,11 +13,13 @@ namespace WEB_253502_POBORTSEVA.UI.Services.ProductService
         private string _pageSize;
         private readonly JsonSerializerOptions _serializerOptions;
         private readonly ILogger<ApiProductService> _logger;
+        private readonly IFileService _fileService;
 
-        public ApiProductService(HttpClient httpClient, IConfiguration configuration,
-                                ILogger<ApiProductService> logger)
+        public ApiProductService(HttpClient httpClient, IConfiguration configuration, ILogger<ApiProductService> logger,
+                                    IFileService fileService)
         {
             _httpClient = httpClient;
+            _fileService = fileService;
             _pageSize = configuration.GetSection("ItemsPerPage").Value;
             _serializerOptions = new JsonSerializerOptions()
             {
@@ -27,7 +30,19 @@ namespace WEB_253502_POBORTSEVA.UI.Services.ProductService
 
         public async Task<ResponseData<Product>> CreateProductAsync(Product product, IFormFile? formFile)
         {
-            var uri = new Uri(_httpClient.BaseAddress.AbsoluteUri + "Products");
+			// Первоначально использовать картинку по умолчанию
+			product.ImagePath = "wwwroot/Images/noimage.jpg";
+			// Сохранить файл изображения
+			if (formFile != null)
+			{
+				var imageUrl = await _fileService.SaveFileAsync(formFile);
+				// Добавить в объект Url изображения
+				if (!string.IsNullOrEmpty(imageUrl))
+					product.ImagePath = imageUrl;
+			}
+
+
+			var uri = new Uri(_httpClient.BaseAddress.AbsoluteUri + "Products");
 
             var response = await _httpClient.PostAsJsonAsync(
             uri,
@@ -110,22 +125,23 @@ namespace WEB_253502_POBORTSEVA.UI.Services.ProductService
         public async Task<ResponseData<ListModel<Product>>> GetProductListAsync(string? categoryNormalizedName, int pageNo = 1)
         {
             // подготовка URL запроса
-            var urlString = new StringBuilder($"{_httpClient.BaseAddress!.AbsoluteUri}Products");
+            var urlString = new StringBuilder($"{_httpClient.BaseAddress!.AbsoluteUri}Products/category");
             // добавить категорию в маршрут
             if (categoryNormalizedName != null)
             {
                 urlString.Append($"/{categoryNormalizedName}");
-            };
+            }
+            var queryString = new List<string>();
             // добавить номер страницы в маршрут
-           // if (pageNo > 1)
-           // {
-                urlString.Append($"/{pageNo}");
-            //};
+            if (pageNo > 1)
+            {
+                urlString.Append(QueryString.Create("pageNo", pageNo.ToString()));
+            }
             // добавить размер страницы в строку запроса
-            //if (!_pageSize.Equals("3"))
-            //{
+            if (!_pageSize.Equals("3"))
+            {
                 urlString.Append(QueryString.Create("pageSize", _pageSize));
-            // }
+            }
             //https://localhost:7002/api/Products/smartphones/1?pageSize=3
             //https://localhost:7002/api/Products/1?pageSize=3
             // отправить запрос к API
@@ -157,6 +173,19 @@ namespace WEB_253502_POBORTSEVA.UI.Services.ProductService
 
         public async Task<ResponseData<Product>> UpdateProductAsync(int id, Product product, IFormFile? formFile)
         {
+
+            // Первоначально использовать картинку по умолчанию
+            product.ImagePath = "wwwroot/Images/noimage.jpg";
+            // Сохранить файл изображения
+            if (formFile != null)
+            {
+                var imageUrl = await _fileService.SaveFileAsync(formFile);
+                // Добавить в объект Url изображения
+                if (!string.IsNullOrEmpty(imageUrl))
+                    product.ImagePath = imageUrl;
+            }
+
+
             var uri = new Uri(_httpClient.BaseAddress.AbsoluteUri + "Products/" + $"{id}");
             var response = await _httpClient.PutAsJsonAsync(uri, product, _serializerOptions);
             if (response.IsSuccessStatusCode)

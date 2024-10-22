@@ -26,8 +26,7 @@ namespace WEB_253502_POBORTSEVA.API.Controllers
         }
 
         // GET: api/Products
-        [HttpGet("{pageNo:int}")]
-        [HttpGet("{category?}/{pageNo:int?}")]
+        [HttpGet("category/{category?}")]
         public async Task<ActionResult<ResponseData<List<Product>>>> GetProducts(string? category, int pageNo = 1, int pageSize = 3)
         {
             return Ok(await _productService.GetProductListAsync(category, pageNo, pageSize));
