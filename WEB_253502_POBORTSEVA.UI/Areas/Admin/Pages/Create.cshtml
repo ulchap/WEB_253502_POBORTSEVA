@@ -1,8 +1,13 @@
 ﻿@page
 @model WEB_253502_POBORTSEVA.UI.Areas.Admin.Pages.CreateModel
+@using WEB_253502_POBORTSEVA.UI.Services.CategoryService
+@inject ICategoryService categoryService
 
 @{
     ViewData["Title"] = "Create";
+
+    var responseCategories = await categoryService.GetCategoryListAsync();
+    var categories = new SelectList(responseCategories.Data ?? new(), "Id", "Name");
 }
 
 <h1>Create</h1>
@@ -27,6 +32,11 @@
                 <label asp-for="Product.Price" class="control-label"></label>
                 <input asp-for="Product.Price" class="form-control" />
                 <span asp-validation-for="Product.Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Product.Category" class="control-label"></label>
+                @Html.DropDownListFor(model => model.Product.Category, categories, "Select a category", new { @class = "form-control" })
+                <span asp-validation-for="Product.Category" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Image" class="control-label"></label>

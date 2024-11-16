@@ -8,7 +8,7 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-page="Create">Create New</a>
+    <a asp-page="Create" class="btn btn-primary">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -41,12 +41,12 @@
                 @Html.DisplayFor(modelItem => item.Price)
             </td>
             <td>
-                <img src="@item.ImagePath" alt="@item.Name" />
+                <img src="@item.ImagePath" alt="@item.Name" width="70px" height="70px"/>
             </td>
             <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-success">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-warning">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
             </td>
         </tr>
 }
