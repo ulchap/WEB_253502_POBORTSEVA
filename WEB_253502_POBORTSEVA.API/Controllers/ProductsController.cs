@@ -10,6 +10,7 @@ using WEB_253502_POBORTSEVA.API.Data;
 using WEB_253502_POBORTSEVA.Domain.Entities;
 using WEB_253502_POBORTSEVA.Domain.Models;
 using WEB_253502_POBORTSEVA.API.Services.ProductService;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WEB_253502_POBORTSEVA.API.Controllers
 {
@@ -33,6 +34,7 @@ namespace WEB_253502_POBORTSEVA.API.Controllers
         }
 
         // GET: api/Products/5
+        [Authorize(Policy = "admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<ResponseData<Product>>> GetProduct(int id)
         {
@@ -47,6 +49,7 @@ namespace WEB_253502_POBORTSEVA.API.Controllers
 
         // PUT: api/Products/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Policy = "admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<ResponseData<Product>>> PutProduct(int id, Product product)
         {
@@ -72,6 +75,7 @@ namespace WEB_253502_POBORTSEVA.API.Controllers
 
         // POST: api/Products
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Policy = "admin")]
         [HttpPost]
         public async Task<ActionResult<ResponseData<Product>>> PostProduct(Product product)
         {
@@ -80,6 +84,7 @@ namespace WEB_253502_POBORTSEVA.API.Controllers
         }
 
         // DELETE: api/Products/5
+        [Authorize(Policy = "admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
