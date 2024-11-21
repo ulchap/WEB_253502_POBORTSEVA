@@ -4,6 +4,7 @@ using WEB_253502_POBORTSEVA.Domain.Models;
 using WEB_253502_POBORTSEVA.Domain.Entities;
 using WEB_253502_POBORTSEVA.UI.Services.ProductService;
 using WEB_253502_POBORTSEVA.UI.Services.FileService;
+using WEB_253502_POBORTSEVA.UI.Services.Authentication;
 
 namespace WEB_253502_POBORTSEVA.UI.Services.ProductService
 {
@@ -14,18 +15,21 @@ namespace WEB_253502_POBORTSEVA.UI.Services.ProductService
         private readonly JsonSerializerOptions _serializerOptions;
         private readonly ILogger<ApiProductService> _logger;
         private readonly IFileService _fileService;
+        private readonly ITokenAccessor _tokenAccessor;
 
         public ApiProductService(HttpClient httpClient, IConfiguration configuration, ILogger<ApiProductService> logger,
-                                    IFileService fileService)
+                                 IFileService fileService, ITokenAccessor tokenAccessor)
         {
             _httpClient = httpClient;
             _fileService = fileService;
+            _tokenAccessor = tokenAccessor;
             _pageSize = configuration.GetSection("ItemsPerPage").Value;
             _serializerOptions = new JsonSerializerOptions()
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
             _logger = logger;
+
         }
 
         public async Task<ResponseData<Product>> CreateProductAsync(Product product, IFormFile? formFile)
@@ -43,6 +47,8 @@ namespace WEB_253502_POBORTSEVA.UI.Services.ProductService
 
 
 			var uri = new Uri(_httpClient.BaseAddress.AbsoluteUri + "Products");
+
+            await _tokenAccessor.SetAuthorizationHeaderAsync(_httpClient);
 
             var response = await _httpClient.PostAsJsonAsync(
             uri,
@@ -69,6 +75,7 @@ namespace WEB_253502_POBORTSEVA.UI.Services.ProductService
         public async Task<ResponseData<string>> DeleteProductAsync(int id)
         {
             var uri = new Uri(_httpClient.BaseAddress.AbsoluteUri + "Products/" + $"{id}");
+            await _tokenAccessor.SetAuthorizationHeaderAsync(_httpClient);
             var response = await _httpClient.DeleteAsync(uri);
             if (response.IsSuccessStatusCode)
             {
@@ -97,6 +104,7 @@ namespace WEB_253502_POBORTSEVA.UI.Services.ProductService
         public async Task<ResponseData<Product>> GetProductByIdAsync(int id)
         {
             var uri = new Uri(_httpClient.BaseAddress.AbsoluteUri + "Products/" + $"{id}");
+            await _tokenAccessor.SetAuthorizationHeaderAsync(_httpClient);
             var response = await _httpClient.GetAsync(uri);
             if (response.IsSuccessStatusCode)
             {
@@ -142,6 +150,8 @@ namespace WEB_253502_POBORTSEVA.UI.Services.ProductService
             {
                 urlString.Append(QueryString.Create("pageSize", _pageSize));
             }
+
+            await _tokenAccessor.SetAuthorizationHeaderAsync(_httpClient);
             //https://localhost:7002/api/Products/smartphones/1?pageSize=3
             //https://localhost:7002/api/Products/1?pageSize=3
             // отправить запрос к API
@@ -187,6 +197,9 @@ namespace WEB_253502_POBORTSEVA.UI.Services.ProductService
 
 
             var uri = new Uri(_httpClient.BaseAddress.AbsoluteUri + "Products/" + $"{id}");
+
+            await _tokenAccessor.SetAuthorizationHeaderAsync(_httpClient);
+
             var response = await _httpClient.PutAsJsonAsync(uri, product, _serializerOptions);
             if (response.IsSuccessStatusCode)
             {

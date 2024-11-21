@@ -1,22 +1,43 @@
-﻿@await Component.InvokeAsync("Cart")
-<div class="dropdown ms-4 nav-color">
-    <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-        User@gmail.com
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <li>
-            <span class="dropdown-item-text">
-                <img src="images/user.png" width="50" alt="User" class="rounded" />
-                user@gmail.com
-            </span>
-        </li>
-        <li><hr class="dropdown-divider"></li>
-        <li>
-            <form id="logoutForm" class="form-inline" action="#" method="post">
-                <button asp-controller="Account" asp-action="LogOut" id="logout" type="submit" class="nav-link btn btn-outline-light">
-                    Logout
-                </button>
-            </form>
-        </li>
-    </ul>
-</div>
+﻿@{
+    var isAuthenticated = User.Identity.IsAuthenticated; 
+    var name = User
+            .Claims
+            .FirstOrDefault(c => c.Type.Equals("preferred_username", StringComparison.OrdinalIgnoreCase))?
+            .Value; 
+    var avatar = User
+            .Claims.FirstOrDefault(c => c.Type.Equals("avatar", StringComparison.OrdinalIgnoreCase))?
+            .Value ?? "../../../WEB_253502_POBORTSEVA.API/wwwroot/Images/default-profile-picture.png";
+}
+
+@await Component.InvokeAsync("Cart")
+@if (!isAuthenticated)
+{
+    <div>
+        <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light">Войти</a>
+        <a asp-controller="Account" asp-action="Register" class="btn btn-light">Зарегистрироваться</a>
+    </div>
+}
+else
+{
+    <div class="dropdown ms-4 nav-color">
+        <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            @name
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li>
+                <span class="dropdown-item-text">
+                    <img src="@avatar" alt="Avatar" width="50" height="50" class="rounded" />
+                    @name
+                </span>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <form asp-controller="Account" asp-action="Logout" method="post" class="form-inline">
+                    <button id="logout" type="submit" class="nav-link btn btn-outline-light">
+                        Выйти
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+}
