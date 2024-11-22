@@ -1,9 +1,7 @@
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using WEB_253502_POBORTSEVA.API.Data;
 using WEB_253502_POBORTSEVA.UI.Services.FileService;
 using WEB_253502_POBORTSEVA.UI;
-using WEB_253502_POBORTSEVA.UI.Extensions;
 using WEB_253502_POBORTSEVA.UI.Services.CategoryService;
 using WEB_253502_POBORTSEVA.UI.Services.ProductService;
 using WEB_253502_POBORTSEVA.UI.HelperClasses;
@@ -12,11 +10,15 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using WEB_253502_POBORTSEVA.UI.Services.Authentication;
 using WEB_253502_POBORTSEVA.UI.Services.Authorization;
+using WEB_253502_POBORTSEVA.UI.TagHelpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<PagerTagHelper>();
+
 builder.Services.AddRazorPages();
 
 //builder.RegisterCustomServices();
@@ -63,6 +65,9 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
+
 
 var app = builder.Build();
 
@@ -80,6 +85,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

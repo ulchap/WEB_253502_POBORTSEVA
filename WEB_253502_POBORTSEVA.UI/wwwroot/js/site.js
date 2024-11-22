@@ -1,4 +1,11 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿$(document).ready(function () {
+    $('a.page-link').click(function (e) {
+        e.preventDefault();
 
-// Write your JavaScript code.
+        var url = $(this).attr('href');
+
+        $.get(url, function (data) {
+            $('#partial-content').html(data);
+        });
+    });
+});

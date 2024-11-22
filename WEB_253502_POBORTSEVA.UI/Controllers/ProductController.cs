@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WEB_253502_POBORTSEVA.UI.Extensions;
 using WEB_253502_POBORTSEVA.Domain.Entities;
 using WEB_253502_POBORTSEVA.UI.Services.CategoryService;
 using WEB_253502_POBORTSEVA.UI.Services.ProductService;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WEB_253502_POBORTSEVA.UI.Controllers
 {
+    [Route("catalog")]
     public class ProductController : Controller
     {
         IProductService _productService;
@@ -16,6 +19,7 @@ namespace WEB_253502_POBORTSEVA.UI.Controllers
             _categoryService = categoryService;
         }
 
+        [Route("{category?}")]
         public async Task<IActionResult> Index(string? category, int pageNo = 1)
         {
             var productResponse = await _productService.GetProductListAsync(category, pageNo);
@@ -31,7 +35,14 @@ namespace WEB_253502_POBORTSEVA.UI.Controllers
             ViewData["categories"] = categoryResponse.Data;
             ViewData["currentCategory"] = currentCategory;
 
-            return View(productResponse.Data);
+            var data = productResponse.Data;
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_CatalogPartial", data);
+            }
+            
+            return View(data);
         }
     }
 }

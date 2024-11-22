@@ -9,6 +9,8 @@
             .Value ?? "../../../WEB_253502_POBORTSEVA.API/wwwroot/Images/default-profile-picture.png";
 }
 
+@* var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;  // id авторизованного пользователя*@
+
 @await Component.InvokeAsync("Cart")
 @if (!isAuthenticated)
 {
