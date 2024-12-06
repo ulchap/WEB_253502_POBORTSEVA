@@ -19,7 +19,7 @@
                         <h5 class="card-title">@item.Name</h5>
                         <p class="card-text">@item.Description</p>
                         <p class="card-text"><strong>Цена:</strong> $@item.Price</p>
-                        <a href="@Url.Action("Add", "Cart", new { id = item.Id, returnUrl })" class="btn btn-primary mt-auto">Добавить в корзину</a>
+                        <a asp-controller="Cart" asp-action="Add" asp-route-id="@item.Id" asp-route-returnUrl="@returnUrl" class="btn btn-primary mt-auto">Добавить в корзину</a>
                     </div>
                 </div>
             </div>

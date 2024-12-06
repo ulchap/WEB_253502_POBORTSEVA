@@ -34,7 +34,6 @@ namespace WEB_253502_POBORTSEVA.API.Controllers
         }
 
         // GET: api/Products/5
-        [Authorize(Policy = "admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<ResponseData<Product>>> GetProduct(int id)
         {

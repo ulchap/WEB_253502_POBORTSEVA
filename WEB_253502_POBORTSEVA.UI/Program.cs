@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using WEB_253502_POBORTSEVA.UI.Services.Authentication;
 using WEB_253502_POBORTSEVA.UI.Services.Authorization;
 using WEB_253502_POBORTSEVA.UI.TagHelpers;
+using WEB_253502_POBORTSEVA.UI.Services.CartService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,8 @@ builder.Services.AddHttpClient<IProductService, ApiProductService>(opt =>
 
 builder.Services.AddHttpClient<IFileService, ApiFileService>(opt =>
     opt.BaseAddress = new Uri($"{uriData.ApiUri}Files"));
+
+builder.Services.AddScoped(SessionCart.GetCart);
 
 builder.Services.AddHttpClient<ITokenAccessor, KeycloakTokenAccessor>();
 builder.Services.AddHttpClient<IAuthService, KeycloakAuthService>();
