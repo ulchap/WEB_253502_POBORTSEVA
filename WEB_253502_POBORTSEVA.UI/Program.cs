@@ -12,6 +12,8 @@ using WEB_253502_POBORTSEVA.UI.Services.Authentication;
 using WEB_253502_POBORTSEVA.UI.Services.Authorization;
 using WEB_253502_POBORTSEVA.UI.TagHelpers;
 using WEB_253502_POBORTSEVA.UI.Services.CartService;
+using Serilog;
+using WEB_253502_POBORTSEVA.UI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,6 +73,9 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
+builder.Host.UseSerilog((ctx, lc) => lc
+    .ReadFrom.Configuration(ctx.Configuration)
+    .Enrich.FromLogContext());
 
 var app = builder.Build();
 
@@ -90,6 +95,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.UseSession();
+app.UseMiddleware<LoggingMiddleware>();
 
 app.MapControllerRoute(
     name: "default",
