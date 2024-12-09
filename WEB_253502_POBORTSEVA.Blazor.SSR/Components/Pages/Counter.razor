@@ -1,0 +1,58 @@
+﻿@page "/counter"
+@page "/counter/{initialValue:int?}"
+@rendermode InteractiveServer
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p role="status">Current count: @currentCount</p>
+
+<EditForm Model="@counterModel" OnValidSubmit="@SetCounter">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="counterValue" class="form-label">Set Counter Value:</label>
+        <InputNumber id="counterValue" @bind-Value="@counterModel.Value" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Установить</button>
+</EditForm>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+
+    [Parameter]
+    public int? initialValue { get; set; }
+
+    private int currentCount = 0;
+
+    protected override void OnParametersSet()
+    {
+        if (initialValue.HasValue)
+        {
+            currentCount = initialValue.Value;
+        }
+    }
+
+    private CounterModel counterModel = new CounterModel();
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+
+    private void SetCounter()
+    {
+        currentCount = counterModel.Value;
+    }
+
+    public class CounterModel
+    {
+        [Range(1, 10, ErrorMessage = "Value must be between 1 and 10.")]
+        public int Value { get; set; }
+    }
+
+}
