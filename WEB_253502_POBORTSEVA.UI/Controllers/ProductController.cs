@@ -22,18 +22,19 @@ namespace WEB_253502_POBORTSEVA.UI.Controllers
         [Route("{category?}")]
         public async Task<IActionResult> Index(string? category, int pageNo = 1)
         {
-            var productResponse = await _productService.GetProductListAsync(category, pageNo);
-            if (!productResponse.Successfull)
-                return NotFound(productResponse.ErrorMessage);
 
             var categoryResponse = await _categoryService.GetCategoryListAsync();
             if (!categoryResponse.Successfull)
                 return NotFound(categoryResponse.ErrorMessage);
 
-            var currentCategory = categoryResponse.Data.FirstOrDefault(c => c.NormalizedName == category)?.Name ?? "Все";
+            var currentCategory = categoryResponse?.Data?.FirstOrDefault(c => c.NormalizedName == category)?.Name ?? "Все";
 
             ViewData["categories"] = categoryResponse.Data;
             ViewData["currentCategory"] = currentCategory;
+
+            var productResponse = await _productService.GetProductListAsync(category, pageNo);
+            if (!productResponse.Successfull)
+                return NotFound(productResponse.ErrorMessage);
 
             var data = productResponse.Data;
 
