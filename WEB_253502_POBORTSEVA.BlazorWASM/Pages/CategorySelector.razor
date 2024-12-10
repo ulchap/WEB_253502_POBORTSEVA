@@ -1,0 +1,46 @@
+﻿@inject IDataService DataService
+@implements IDisposable
+
+<div class="mb-4">
+    <label for="category-select" class="form-label fw-bold">Выберите категорию:</label>
+    <select id="category-select" class="form-select" @onchange="OnCategoryChanged">
+        <option value="All" selected="@(DataService.SelectedCategory == null)">Все категории</option>
+        @foreach (var category in DataService.Categories)
+        {
+            <option value="@category.NormalizedName"
+                    selected="@(DataService.SelectedCategory?.NormalizedName == category.NormalizedName)">
+                @category.Name
+            </option>
+        }
+    </select>
+</div>
+
+@code {
+    async protected override void OnInitialized()
+    {
+        DataService.DataLoaded += StateHasChanged;
+        await DataService.GetCategoryListAsync();
+    }
+
+    private async Task OnCategoryChanged(ChangeEventArgs e)
+    {
+        var selectedValue = e.Value?.ToString();
+
+        if (selectedValue == "All")
+        {
+            DataService.SelectedCategory = null;
+        }
+        else
+        {
+            DataService.SelectedCategory = DataService.Categories
+                .FirstOrDefault(c => c.NormalizedName == selectedValue);
+        }
+
+        await DataService.GetProductListAsync(DataService.SelectedCategory?.NormalizedName);
+    }
+
+    public void Dispose()
+    {
+        DataService.DataLoaded -= StateHasChanged;
+    }
+}

@@ -48,6 +48,14 @@ builder.Services.AddAuthorization(opt =>
     opt.AddPolicy("admin", p => p.RequireRole("POWER-USER"));
 });
 
+builder.Services.AddCors(options => { options.AddPolicy("AllowSpecificOrigin", 
+    builder => {
+    builder.WithOrigins("https://localhost:7198") //Blazor URL
+           .AllowAnyHeader() 
+           .AllowAnyMethod(); 
+    }); 
+});
+
 var app = builder.Build();
 await DbInitializer.SeedData(app);
 
@@ -63,6 +71,8 @@ app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseCors("AllowSpecificOrigin");
 
 app.MapControllerRoute(
     name: "default",

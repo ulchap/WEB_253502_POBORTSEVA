@@ -1,0 +1,27 @@
+﻿@page "/products"
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+
+<h3>Products</h3>
+<CategorySelector />
+<ProductList onButtonClicked="@OnProductSelected" />
+<Pager Category="@DataService.SelectedCategory?.NormalizedName" />
+<ProductDetail SelectedProduct = "@SelectedProduct"/>
+
+@code {
+    [Inject]
+    public IDataService DataService { get; set; }
+
+    Product SelectedProduct { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await DataService.GetProductListAsync(null);
+    }
+
+    public async void OnProductSelected(int id)
+    {
+        SelectedProduct = DataService.Products.First(product => product.Id == id);
+        await InvokeAsync(StateHasChanged);
+    }
+}
